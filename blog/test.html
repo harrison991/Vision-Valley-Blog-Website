@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Post | Vision Valley Blog</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/blog.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="/js/api.js"></script>
+    <script>
+        // Detect if we're on the server and update paths if needed
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the base URL from the API client if available
+            const baseUrl = (typeof api !== 'undefined' && api.baseUrl) ? api.baseUrl : '';
+            
+            // If we're accessing this page directly from the server, update paths
+            if (window.location.href.includes(':5000/blog/')) {
+                // Update all relative links to absolute server paths
+                document.querySelectorAll('a').forEach(link => {
+                    if (link.href.includes('index.html')) {
+                        link.href = baseUrl + '/index.html';
+                    } else if (link.href.includes('about.html')) {
+                        link.href = baseUrl + '/about.html';
+                    } else if (link.href.includes('blog.html')) {
+                        link.href = baseUrl + '/blog.html';
+                    } else if (link.href.includes('gallery.html')) {
+                        link.href = baseUrl + '/gallery.html';
+                    } else if (link.href.includes('contact.html')) {
+                        link.href = baseUrl + '/contact.html';
+                    } else if (link.href.includes('admin/login.html')) {
+                        link.href = baseUrl + '/admin/login.html';
+                    }
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>Vision Valley</h1>
+                <p>Residential Program</p>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/index.html">Home</a></li>
+                    <li><a href="/about.html">About</a></li>
+                    <li><a href="/blog.html" class="active">Blog</a></li>
+                    <li><a href="/gallery.html">Gallery</a></li>
+                    <li><a href="/contact.html">Contact</a></li>
+                    <li><a href="/admin/login.html" class="login-btn"><i class="fas fa-lock"></i> Admin</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="blog-post">
+        <div class="blog-post-container container">
+            <div class="post-header">
+                <h1 class="post-title">Test Post</h1>
+                <div class="post-meta">
+                    <span><i class="fas fa-calendar"></i> June 17, 2025</span>
+                    <span><i class="fas fa-user"></i> Admin</span>
+                    <span><i class="fas fa-folder"></i> Test</span>
+                </div>
+            </div>
+        
+            <div class="post-image">
+                <img src="/images/placeholder-image.jpg" alt="Test Post">
+            </div>
+            
+            <div class="post-content">
+                <p>This is a test post to verify that blog styling is working properly when accessing posts directly from the server.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget felis eget urna ultricies placerat. Donec auctor, nisl eget ultricies ultricies, nisl nisl ultricies nisl, eget ultricies nisl nisl eget nisl.</p>
+                <h2>Heading 2</h2>
+                <p>Curabitur at ipsum ac tellus semper interdum. Mauris ullamcorper purus sit amet nulla. Quisque arcu libero, rutrum ac, lobortis vel, dapibus at, diam. Nam tristique tortor eu pede.</p>
+                <blockquote>
+                    <p>This is a blockquote. It should be styled differently to make it stand out.</p>
+                </blockquote>
+                <h3>Heading 3</h3>
+                <p>Pellentesque dapibus hendrerit tortor. Praesent egestas tristique nibh. Sed a libero. Cras varius. Donec vitae orci sed dolor rutrum auctor.</p>
+                <ul>
+                    <li>Unordered list item 1</li>
+                    <li>Unordered list item 2</li>
+                    <li>Unordered list item 3</li>
+                </ul>
+                <p>Fusce convallis metus id felis luctus adipiscing. Pellentesque egestas, neque sit amet convallis pulvinar, justo nulla eleifend augue, ac auctor orci leo non est.</p>
+            </div>
+            
+            <div class="post-tags">
+                <span><i class="fas fa-tags"></i> Tags:</span>
+                <a href="#">Test</a>
+                <a href="#">Blog</a>
+                <a href="#">Vision Valley</a>
+            </div>
+            
+            <div class="post-author">
+                <div class="author-avatar">
+                    <img src="/images/placeholder-image.jpg" alt="Author">
+                </div>
+                <div class="author-info">
+                    <h3>Admin</h3>
+                    <p>Administrator of the Vision Valley Residential Program blog.</p>
+                </div>
+            </div>
+            
+            <div class="related-posts">
+                <h2>Related Posts</h2>
+                <div class="posts-grid" id="relatedPosts">
+                    <!-- Related posts will be loaded via JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content container">
+            <div class="footer-about">
+                <h4>Vision Valley</h4>
+                <p>The Vision Valley Residential Program at Pymble Ladies College offers students a unique opportunity to learn, grow, and connect with nature while developing leadership skills and resilience.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="/index.html">Home</a></li>
+                    <li><a href="/about.html">About</a></li>
+                    <li><a href="/blog.html">Blog</a></li>
+                    <li><a href="/gallery.html">Gallery</a></li>
+                    <li><a href="/contact.html">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-social">
+                <h4>Follow Us</h4>
+                <div class="social-icons">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="footer-contact">
+                <h4>Contact Info</h4>
+                <p><i class="fas fa-map-marker-alt"></i> Pymble Ladies College, Avon Road, Pymble, NSW 2073</p>
+                <p><i class="fas fa-phone"></i> +61 2 1234 5678</p>
+                <p><i class="fas fa-envelope"></i> info@visionvalley.edu.au</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; 2025 Vision Valley Residential Program. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+    <script>
+        // Load related posts when the page loads (already handled by the main script)
+    </script>
+</body>
+</html>

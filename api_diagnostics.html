@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Connection Diagnostics | Vision Valley</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .log {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+        .warning {
+            color: orange;
+        }
+        #apiBaseUrl {
+            width: 300px;
+            padding: 8px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>API Connection Diagnostics</h1>
+    
+    <div class="card">
+        <h2>API Settings</h2>
+        <p>Current API Base URL: <span id="currentBaseUrl"></span></p>
+        <div>
+            <input type="text" id="apiBaseUrl" placeholder="http://192.168.0.50:5000">
+            <button id="updateBaseUrl">Update Base URL</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Connection Tests</h2>
+        <button id="testConnection">Test Connection</button>
+        <button id="testEndpoints">Test All Endpoints</button>
+        <button id="clearLog">Clear Log</button>
+        
+        <h3>Results:</h3>
+        <div id="log" class="log">Waiting for tests to run...</div>
+    </div>
+
+    <div class="card">
+        <h2>Environment Information</h2>
+        <table id="envInfo">
+            <tr><th>Browser</th><td id="browser"></td></tr>
+            <tr><th>User Agent</th><td id="userAgent"></td></tr>
+            <tr><th>Window Size</th><td id="windowSize"></td></tr>
+            <tr><th>CORS Support</th><td id="corsSupport"></td></tr>
+            <tr><th>Fetch API Support</th><td id="fetchSupport"></td></tr>
+        </table>
+    </div>
+
+    <div class="card">
+        <h2>API Endpoints</h2>
+        <table>
+            <tr>
+                <th>Endpoint</th>
+                <th>Purpose</th>
+                <th>Method</th>
+            </tr>
+            <tr>
+                <td>/api/stats</td>
+                <td>Get site statistics</td>
+                <td>GET</td>
+            </tr>
+            <tr>
+                <td>/api/posts</td>
+                <td>Get all posts</td>
+                <td>GET</td>
+            </tr>
+            <tr>
+                <td>/api/media</td>
+                <td>Get all media</td>
+                <td>GET</td>
+            </tr>
+            <tr>
+                <td>/api/pages</td>
+                <td>Get all pages</td>
+                <td>GET</td>
+            </tr>
+            <tr>
+                <td>/api/settings</td>
+                <td>Get site settings</td>
+                <td>GET</td>
+            </tr>
+        </table>
+    </div>
+
+    <p><a href="index.html">Back to Home</a> | <a href="admin/login.html">Login to Admin</a></p>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get environment information
+            document.getElementById('browser').textContent = getBrowserInfo();
+            document.getElementById('userAgent').textContent = navigator.userAgent;
+            document.getElementById('windowSize').textContent = `${window.innerWidth}x${window.innerHeight}`;
+            document.getElementById('corsSupport').innerHTML = '<span class="success">Supported</span>';
+            document.getElementById('fetchSupport').innerHTML = typeof fetch !== 'undefined' ? 
+                '<span class="success">Supported</span>' : '<span class="error">Not Supported</span>';
+            
+            // API base URL from localStorage or default
+            const storedBaseUrl = localStorage.getItem('api_base_url');
+            let apiBaseUrl = storedBaseUrl || 'http://192.168.0.50:5000';
+            
+            document.getElementById('currentBaseUrl').textContent = apiBaseUrl;
+            document.getElementById('apiBaseUrl').value = apiBaseUrl;
+            
+            // Update base URL button
+            document.getElementById('updateBaseUrl').addEventListener('click', function() {
+                const newBaseUrl = document.getElementById('apiBaseUrl').value.trim();
+                if (newBaseUrl) {
+                    apiBaseUrl = newBaseUrl;
+                    localStorage.setItem('api_base_url', apiBaseUrl);
+                    document.getElementById('currentBaseUrl').textContent = apiBaseUrl;
+                    logMessage('API Base URL updated to: ' + apiBaseUrl);
+                }
+            });
+            
+            // Test connection button
+            document.getElementById('testConnection').addEventListener('click', function() {
+                testApiConnection(apiBaseUrl);
+            });
+            
+            // Test all endpoints button
+            document.getElementById('testEndpoints').addEventListener('click', function() {
+                testAllEndpoints(apiBaseUrl);
+            });
+            
+            // Clear log button
+            document.getElementById('clearLog').addEventListener('click', function() {
+                document.getElementById('log').innerHTML = 'Log cleared.';
+            });
+            
+            // Run initial connection test
+            setTimeout(function() {
+                testApiConnection(apiBaseUrl);
+            }, 500);
+        });
+        
+        // Helper to log messages
+        function logMessage(message, type = 'info') {
+            const log = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const classType = type === 'error' ? 'error' : (type === 'success' ? 'success' : 
+                               type === 'warning' ? 'warning' : '');
+            
+            log.innerHTML += `<div class="${classType}">[${timestamp}] ${message}</div>`;
+            log.scrollTop = log.scrollHeight;
+        }
+        
+        // Test API connection
+        function testApiConnection(baseUrl) {
+            logMessage('Testing connection to ' + baseUrl + '...');
+            
+            fetch(baseUrl + '/api/stats', { 
+                method: 'GET',
+                headers: { 'Accept': 'application/json' },
+                mode: 'cors',
+                signal: AbortSignal.timeout(5000)
+            })
+            .then(response => {
+                if (response.ok) {
+                    logMessage('✅ Connection successful! Server is responding.', 'success');
+                    return response.json();
+                } else {
+                    logMessage(`❌ Server responded with error: ${response.status} ${response.statusText}`, 'error');
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+            })
+            .then(data => {
+                logMessage(`✅ Data received: ${JSON.stringify(data)}`, 'success');
+            })
+            .catch(error => {
+                if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                    logMessage('❌ Network error - server might be unreachable', 'error');
+                    logMessage('Check if:' +
+                        '\n1. The server is running' + 
+                        '\n2. The IP address is correct' + 
+                        '\n3. The port is correct and open' + 
+                        '\n4. No firewall is blocking the connection' + 
+                        '\n5. CORS is enabled on the server', 'warning');
+                } else if (error.name === 'AbortError') {
+                    logMessage('❌ Request timeout - server took too long to respond', 'error');
+                } else {
+                    logMessage(`❌ Error: ${error.message}`, 'error');
+                }
+            });
+        }
+        
+        // Test all endpoints
+        function testAllEndpoints(baseUrl) {
+            const endpoints = [
+                { path: '/api/stats', method: 'GET' },
+                { path: '/api/posts', method: 'GET' },
+                { path: '/api/media', method: 'GET' },
+                { path: '/api/pages', method: 'GET' },
+                { path: '/api/settings', method: 'GET' }
+            ];
+            
+            logMessage('Testing all endpoints...');
+            
+            endpoints.forEach(endpoint => {
+                fetch(baseUrl + endpoint.path, { 
+                    method: endpoint.method,
+                    headers: { 'Accept': 'application/json' },
+                    mode: 'cors',
+                    signal: AbortSignal.timeout(5000)
+                })
+                .then(response => {
+                    if (response.ok) {
+                        logMessage(`✅ ${endpoint.path} - OK (${response.status})`, 'success');
+                    } else {
+                        logMessage(`❌ ${endpoint.path} - Error: ${response.status} ${response.statusText}`, 'error');
+                    }
+                })
+                .catch(error => {
+                    logMessage(`❌ ${endpoint.path} - ${error.message}`, 'error');
+                });
+            });
+        }
+        
+        // Get browser information
+        function getBrowserInfo() {
+            const userAgent = navigator.userAgent;
+            let browserName = "Unknown";
+            
+            if (userAgent.match(/chrome|chromium|crios/i)) {
+                browserName = "Chrome";
+            } else if (userAgent.match(/firefox|fxios/i)) {
+                browserName = "Firefox";
+            } else if (userAgent.match(/safari/i)) {
+                browserName = "Safari";
+            } else if (userAgent.match(/opr\//i)) {
+                browserName = "Opera";
+            } else if (userAgent.match(/edg/i)) {
+                browserName = "Edge";
+            }
+            
+            return browserName;
+        }
+    </script>
+</body>
+</html>

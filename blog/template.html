@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}} | Vision Valley Blog</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/blog.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="/js/api.js"></script>
+    <script>
+        // Detect if we're on the server and update paths if needed
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the base URL from the API client if available
+            const baseUrl = (typeof api !== 'undefined' && api.baseUrl) ? api.baseUrl : '';
+            
+            // If we're accessing this page directly from the server, update paths
+            if (window.location.href.includes(':5000/blog/')) {
+                // Update all relative links to absolute server paths
+                document.querySelectorAll('a').forEach(link => {
+                    if (link.href.includes('index.html')) {
+                        link.href = baseUrl + '/index.html';
+                    } else if (link.href.includes('about.html')) {
+                        link.href = baseUrl + '/about.html';
+                    } else if (link.href.includes('blog.html')) {
+                        link.href = baseUrl + '/blog.html';
+                    } else if (link.href.includes('gallery.html')) {
+                        link.href = baseUrl + '/gallery.html';
+                    } else if (link.href.includes('contact.html')) {
+                        link.href = baseUrl + '/contact.html';
+                    } else if (link.href.includes('admin/login.html')) {
+                        link.href = baseUrl + '/admin/login.html';
+                    }
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>Vision Valley</h1>
+                <p>Residential Program</p>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/index.html">Home</a></li>
+                    <li><a href="/about.html">About</a></li>
+                    <li><a href="/blog.html" class="active">Blog</a></li>
+                    <li><a href="/gallery.html">Gallery</a></li>
+                    <li><a href="/contact.html">Contact</a></li>
+                    <li><a href="/admin/login.html" class="login-btn"><i class="fas fa-lock"></i> Admin</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="blog-post">
+        <div class="blog-post-container container">
+            <div class="post-header">
+                <h1 class="post-title">{{title}}</h1>
+                <div class="post-meta">
+                    <span><i class="fas fa-calendar"></i> {{date}}</span>
+                    <span><i class="fas fa-user"></i> {{author}}</span>
+                    <span><i class="fas fa-folder"></i> {{category}}</span>
+                </div>
+            </div>
+
+            <img src="../{{image}}" alt="{{title}}" class="post-featured-image">
+
+            <div class="post-content">
+                {{content}}
+            </div>
+
+            <div class="post-tags">
+                <!-- Tags will be populated dynamically if needed -->
+            </div>
+
+            <div class="post-share">
+                <h4>Share This Post:</h4>
+                <div class="share-buttons">
+                    <a href="#" class="facebook" aria-label="Share on Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="twitter" aria-label="Share on Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="linkedin" aria-label="Share on LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="pinterest" aria-label="Share on Pinterest"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+            </div>
+
+            <div class="author-box">
+                <div class="author-img"></div>
+                <div class="author-info">
+                    <h4>{{author}}</h4>
+                    <p>Writer for the Vision Valley Residential Program.</p>
+                </div>
+            </div>
+
+            <div class="related-posts">
+                <h3>Related Posts</h3>
+                <div class="related-grid" id="relatedPosts">
+                    <!-- Related posts will be loaded dynamically by JavaScript -->
+                </div>
+            </div>
+
+            <div class="comments-section">
+                <h3>Comments</h3>
+                <div id="comments">
+                    <!-- Comments will be loaded dynamically by JavaScript if implemented -->
+                </div>
+
+                <div class="comment-form">
+                    <h4>Leave a Comment</h4>
+                    <form>
+                        <div class="form-group">
+                            <input type="text" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" placeholder="Your Email" required>
+                        </div>
+                        <div class="form-group">
+                            <textarea placeholder="Your Comment" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn">Post Comment</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-container container">
+            <div class="footer-about">
+                <h3>Vision Valley</h3>
+                <p>The Vision Valley Residential Program at Pymble Ladies College offers students a unique opportunity to learn, grow, and connect with nature.</p>
+            </div>
+            <div class="footer-nav">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="../about.html">About</a></li>
+                    <li><a href="../blog.html">Blog</a></li>                    <li><a href="/gallery.html">Gallery</a></li>
+                    <li><a href="/contact.html">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-social">
+                <h4>Follow Us</h4>
+                <div class="social-icons">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="footer-contact">
+                <h4>Contact Info</h4>
+                <p><i class="fas fa-map-marker-alt"></i> Pymble Ladies College, Avon Road, Pymble, NSW 2073</p>
+                <p><i class="fas fa-phone"></i> +61 2 1234 5678</p>
+                <p><i class="fas fa-envelope"></i> info@visionvalley.edu.au</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; 2025 Vision Valley Residential Program. All Rights Reserved.</p>
+            </div>
+        </div>    </footer>
+
+    <script src="/js/main.js"></script>
+    <script>
+        // Load related posts when the page loads
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                // Get current post slug from URL
+                const currentSlug = window.location.pathname.split('/').pop().replace('.html', '');
+                
+                // Get the base URL from the API client if available
+                const baseUrl = (typeof api !== 'undefined' && api.baseUrl) ? api.baseUrl : '';
+                
+                // Load related posts
+                const posts = await api.posts.getAll(true);
+                const relatedPosts = posts
+                    .filter(post => post.slug !== currentSlug)
+                    .slice(0, 3);
+                
+                const relatedPostsContainer = document.getElementById('relatedPosts');
+                
+                if (relatedPosts.length > 0 && relatedPostsContainer) {
+                    relatedPosts.forEach(post => {
+                        const postElement = document.createElement('article');
+                        postElement.className = 'post-card';
+                        
+                        // Ensure image URL is properly formatted
+                        let imageUrl = post.image || 'images/blog/default.jpg';
+                        if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+                            imageUrl = baseUrl + '/' + imageUrl;
+                        }
+                        
+                        postElement.innerHTML = `
+                            <div class="post-image">                                <img src="${imageUrl}" alt="${post.title}" onerror="this.src='/images/placeholder-image.jpg'">
+                            </div>
+                            <div class="post-content">
+                                <span class="post-date">${post.date}</span>
+                                <h3 class="post-title">
+                                    <a href="${baseUrl}/blog/${post.slug}.html">${post.title}</a>
+                                </h3>
+                                <p class="post-excerpt">${post.excerpt || ''}</p>
+                                <a href="${baseUrl}/blog/${post.slug}.html" class="btn">Read More</a>
+                            </div>
+                        `;
+                        
+                        relatedPostsContainer.appendChild(postElement);
+                    });
+                } else {
+                    relatedPostsContainer.innerHTML = '<p>No related posts found.</p>';
+                }
+            } catch (error) {
+                console.error('Error loading related posts:', error);
+            }
+        });
+    </script>
+</body>
+</html>

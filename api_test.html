@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vision Valley API Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .test-section {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .result {
+            background-color: #ecf0f1;
+            padding: 10px;
+            border-left: 4px solid #3498db;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+        .error {
+            border-left-color: #e74c3c;
+            background-color: #f9eae8;
+        }
+        .status {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .online {
+            color: #27ae60;
+        }
+        .offline {
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <h1>Vision Valley API Test</h1>
+    
+    <div class="test-section">
+        <h2>Server Status</h2>
+        <div class="status" id="serverStatus">Checking server status...</div>
+        <button id="checkStatus">Check Server Status</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>Posts API</h2>
+        <button id="getAllPosts">Get All Posts</button>
+        <button id="getPublishedPosts">Get Published Posts Only</button>
+        <div class="result" id="postsResult">Results will appear here...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Pages API</h2>
+        <button id="getAllPages">Get All Pages</button>
+        <div class="result" id="pagesResult">Results will appear here...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Stats API</h2>
+        <button id="getStats">Get Basic Stats</button>
+        <div class="result" id="statsResult">Results will appear here...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Authentication Test</h2>
+        <button id="testAuth">Test Login</button>
+        <div class="result" id="authResult">Results will appear here...</div>
+    </div>
+
+    <script>
+        // Set the API base URL
+        const API_URL = 'http://localhost:5000/api';
+        
+        // Helper function for API requests
+        async function fetchAPI(endpoint, options = {}) {
+            try {
+                const response = await fetch(`${API_URL}${endpoint}`, options);
+                return await response.json();
+            } catch (error) {
+                console.error(`API Error (${endpoint}):`, error);
+                return { error: error.message || 'Network error' };
+            }
+        }
+        
+        // Server status check
+        async function checkServerStatus() {
+            const serverStatus = document.getElementById('serverStatus');
+            try {
+                const response = await fetch(API_URL.replace('/api', ''));
+                if (response.ok) {
+                    serverStatus.textContent = '✅ Server is online and responding';
+                    serverStatus.className = 'status online';
+                } else {
+                    serverStatus.textContent = '⚠️ Server is online but returned an error';
+                    serverStatus.className = 'status offline';
+                }
+            } catch (error) {
+                serverStatus.textContent = '❌ Server is offline or unreachable';
+                serverStatus.className = 'status offline';
+                console.error('Server check error:', error);
+            }
+        }
+        
+        // Display results in the appropriate element
+        function displayResult(elementId, data) {
+            const element = document.getElementById(elementId);
+            
+            if (data.error) {
+                element.textContent = `Error: ${data.error}`;
+                element.classList.add('error');
+            } else {
+                element.textContent = JSON.stringify(data, null, 2);
+                element.classList.remove('error');
+            }
+        }
+        
+        // Run the server check immediately
+        checkServerStatus();
+        
+        // Set up event listeners for all buttons
+        document.getElementById('checkStatus').addEventListener('click', checkServerStatus);
+        
+        document.getElementById('getAllPosts').addEventListener('click', async () => {
+            const data = await fetchAPI('/posts');
+            displayResult('postsResult', data);
+        });
+        
+        document.getElementById('getPublishedPosts').addEventListener('click', async () => {
+            const data = await fetchAPI('/posts?published=true');
+            displayResult('postsResult', data);
+        });
+        
+        document.getElementById('getAllPages').addEventListener('click', async () => {
+            const data = await fetchAPI('/pages');
+            displayResult('pagesResult', data);
+        });
+        
+        document.getElementById('getStats').addEventListener('click', async () => {
+            const data = await fetchAPI('/stats');
+            displayResult('statsResult', data);
+        });
+        
+        document.getElementById('testAuth').addEventListener('click', async () => {
+            const data = await fetchAPI('/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: 'admin',
+                    password: 'admin'
+                })
+            });
+            displayResult('authResult', data);
+        });
+    </script>
+</body>
+</html>

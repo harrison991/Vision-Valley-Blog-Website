@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Library | Vision Valley Admin</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/blog.css">
+    <link rel="stylesheet" href="../css/admin-dashboard.css">    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <!-- Firebase Authentication -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+</head>
+<body>
+    <div class="admin-page">
+        <div class="admin-sidebar">
+            <div class="admin-sidebar-header">
+                <div class="admin-sidebar-logo">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <h2>Vision Valley</h2>
+                <p>Admin Dashboard</p>
+            </div>
+            <nav class="admin-nav">
+                <div class="nav-section">
+                    <p class="nav-section-title">Management</p>
+                    <ul>
+                        <li><a href="index.html" data-page="dashboard"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                        <li><a href="posts.html" data-page="posts"><i class="fas fa-file-alt"></i> <span>Blog Posts</span></a></li>
+                        <li><a href="pages.html" data-page="pages"><i class="fas fa-file"></i> <span>Pages</span></a></li>
+                        <li><a href="media.html" class="active" data-page="media"><i class="fas fa-images"></i> <span>Media</span></a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <p class="nav-section-title">Configuration</p>
+                    <ul>
+                        <li><a href="settings.html" data-page="settings"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+                        <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+                    </ul>
+                </div>
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <!-- Will be populated by JavaScript -->
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-info">
+                        <!-- Will be populated by JavaScript -->
+                        <p class="user-name">Admin</p>
+                        <p class="user-email"></p>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        
+        <div class="admin-main">
+            <div class="admin-header">
+                <div class="admin-header-info">
+                    <div>
+                        <h1>Media Library</h1>
+                        <p class="admin-header-subtitle">Manage website images and Google Drive embeds</p>
+                    </div>
+                </div>
+                <div class="admin-actions">
+                    <button class="admin-btn admin-btn-primary" id="uploadMedia"><i class="fas fa-cloud-upload-alt"></i> Upload Media</button>
+                </div>
+            </div>
+            
+        <div class="admin-content">
+                <!-- Media upload form -->
+                <div id="mediaUploadContainer" style="display: none;" class="admin-form-container">
+                    <h2>Upload New Media</h2>
+                    <form id="uploadForm" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="mediaUpload">Select Image</label>
+                            <input type="file" id="mediaUpload" accept="image/*" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="mediaTitle">Title</label>
+                            <input type="text" id="mediaTitle" placeholder="Image title">
+                        </div>
+                        <div class="form-group">
+                            <label for="mediaDescription">Description</label>
+                            <textarea id="mediaDescription" placeholder="Optional description"></textarea>
+                        </div>
+                        <div id="uploadProgressContainer" style="display: none;" class="progress-container">
+                            <progress id="uploadProgress" value="0" max="100"></progress>
+                            <span id="progressPercent">0%</span>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" onclick="uploadMedia()" class="admin-btn admin-btn-primary">Upload</button>
+                            <button type="button" onclick="cancelUpload()" class="admin-btn">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Media gallery -->
+                <div id="mediaGallery">
+                    <div class="loading">Loading media...</div>
+                </div>
+            </div>
+            
+            <div class="drive-integration">
+                <h2>Google Drive Integrations</h2>
+                <p>Add Google Drive folders or files to embed in your content.</p>
+                <div id="driveContent">
+                    <!-- Drive content will be loaded by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="../js/db.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/admin.js"></script>
+</body>
+</html>

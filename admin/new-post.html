@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Post | Vision Valley Admin</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/admin-dashboard.css">
+    <link rel="stylesheet" href="../css/blog.css">    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <!-- Firebase Authentication -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+</head>
+<body>
+    <div class="admin-page">
+        <div class="admin-sidebar">
+            <div class="admin-sidebar-header">
+                <div class="admin-sidebar-logo">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <h2>Vision Valley</h2>
+                <p>Admin Dashboard</p>
+            </div>
+            <nav class="admin-nav">
+                <div class="nav-section">
+                    <p class="nav-section-title">Management</p>
+                    <ul>
+                        <li><a href="index.html" data-page="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                        <li><a href="posts.html" class="active" data-page="posts"><i class="fas fa-file-alt"></i> Blog Posts</a></li>
+                        <li><a href="pages.html" data-page="pages"><i class="fas fa-file"></i> Pages</a></li>
+                        <li><a href="media.html" data-page="media"><i class="fas fa-images"></i> Media</a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <p class="nav-section-title">Configuration</p>
+                    <ul>
+                        <li><a href="settings.html" data-page="settings"><i class="fas fa-cog"></i> Settings</a></li>
+                        <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    </ul>
+                </div>
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <!-- Will be populated by Javascript -->
+                        <i class ="fas fa-user"></i>
+                    </div>
+                    <div class="user-info">
+                        <!-- Will be populated by JavaScript -->
+                        <p class="user-name">Admin</p>
+                        <p class="user-email"></p>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        
+        <div class="admin-main">
+            <div class="admin-header">
+                <h1>Create New Post</h1>
+                <div class="admin-actions">
+                    <button class="admin-btn" id="savePost"><i class="fas fa-save"></i> Save Post</button>
+                    <button class="admin-btn secondary"><i class="fas fa-eye"></i> Preview</button>
+                </div>
+            </div>
+            
+            <div class="admin-content">
+                <form class="admin-form">
+                    <div class="form-group">
+                        <label for="postTitle">Post Title</label>
+                        <input type="text" id="postTitle" placeholder="Enter post title" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="postCategory">Category</label>
+                            <select id="postCategory">
+                                <option value="student-life">Student Life</option>
+                                <option value="events">Events</option>
+                                <option value="leadership">Leadership</option>
+                                <option value="nature">Nature & Environment</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="postStatus">Status</label>
+                            <select id="postStatus">
+                                <option value="published">Published</option>
+                                <option value="draft">Draft</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="postExcerpt">Excerpt</label>
+                        <textarea id="postExcerpt" placeholder="Enter a short excerpt or summary"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contentEditor">Content</label>
+                        <div class="editor-toolbar">
+                            <button type="button" title="Bold"><i class="fas fa-bold"></i></button>
+                            <button type="button" title="Italic"><i class="fas fa-italic"></i></button>
+                            <button type="button" title="Heading"><i class="fas fa-heading"></i></button>
+                            <button type="button" title="Link"><i class="fas fa-link"></i></button>
+                            <button type="button" title="Image"><i class="fas fa-image"></i></button>
+                            <button type="button" title="List"><i class="fas fa-list-ul"></i></button>
+                            <button type="button" title="Numbered List"><i class="fas fa-list-ol"></i></button>
+                            <button type="button" title="Quote"><i class="fas fa-quote-left"></i></button>
+                            <button type="button" id="addDriveEmbed" title="Add Google Drive Embed"><i class="fab fa-google-drive"></i></button>
+                        </div>
+                        <textarea id="contentEditor" placeholder="Write your content here..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Featured Image</label>
+                        <div class="featured-image-upload">
+                            <div class="featured-image-preview">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span>Click to upload an image</span>
+                            </div>
+                            <input type="file" id="featuredImage" accept="image/*" style="display: none;">
+                            <button type="button" class="admin-btn secondary" id="selectImage">Select Image</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="postTags">Tags</label>
+                        <input type="text" id="postTags" placeholder="Enter tags separated by commas">
+                    </div>
+                    
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="allowComments" checked>
+                        <label for="allowComments">Allow Comments</label>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+      <script src="../js/db.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/admin.js"></script>
+</body>
+</html>

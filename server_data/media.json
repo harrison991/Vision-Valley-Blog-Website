@@ -1,0 +1,20 @@
+[
+  {
+    "id": 3,
+    "name": "Photo on 17-6-2025 at 09.32 #3.jpg",
+    "path": "/uploads/bb345450-f71a-42b6-b310-ca95a7f6b479_Photo_on_17-6-2025_at_09.32_3.jpg",
+    "type": "image",
+    "title": "Test image",
+    "description": "",
+    "dateUploaded": "2025-06-17"
+  },
+  {
+    "id": 4,
+    "name": "1722549404316.jpg",
+    "path": "/uploads/3878f2a8-f2bd-4c3e-8022-f212b5002d86_1722549404316.jpg",
+    "type": "image",
+    "title": "VV25",
+    "description": "",
+    "dateUploaded": "2025-06-17"
+  }
+]

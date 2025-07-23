@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery | Vision Valley Residential Program</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        /* Additional Gallery Page Styles */
+        .gallery-page {
+            padding: 2rem 0 4rem;
+        }
+
+        .gallery-filters {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: none;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 8px 16px;
+            margin: 0 8px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .filter-btn:hover {
+            background-color: var(--light-color);
+        }
+
+        .filter-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .gallery-full-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .gallery-card {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            height: 300px;
+        }
+        
+        .gallery-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .gallery-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            color: white;
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .gallery-card:hover .gallery-overlay {
+            opacity: 1;
+        }
+        
+        .gallery-overlay h3 {
+            margin-bottom: 5px;
+            font-size: 1.2rem;
+        }
+        
+        .gallery-overlay p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        
+        .gallery-section {
+            margin-bottom: 4rem;
+        }
+        
+        .gallery-section-title {
+            margin-bottom: 2rem;
+            text-align: center;
+            color: var(--primary-color);
+        }
+        
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+        
+        .lightbox.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .lightbox-content {
+            position: relative;
+            width: 80%;
+            max-width: 1000px;
+        }
+        
+        .lightbox-img {
+            width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+        }
+        
+        .lightbox-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+        
+        .lightbox-caption {
+            color: white;
+            text-align: center;
+            padding: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .gallery-full-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .gallery-card {
+                height: 250px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gallery-full-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>Vision Valley</h1>
+                <p>Residential Program</p>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="gallery.html" class="active">Gallery</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="admin/login.html" class="login-btn"><i class="fas fa-lock"></i> Admin</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Page Banner -->
+    <section class="page-banner" style="background-image: linear-gradient(rgba(0, 47, 103, 0.7), rgba(0, 47, 103, 0.7)), url('https://www.pymblelc.nsw.edu.au/visionvalley/wp-content/uploads/sites/3/2024/07/PLC_VISION_VALLEY_ACTIVITIES_171-2000x730.jpg');">
+        <div class="container">
+            <h1>Vision Valley Gallery</h1>
+            <p>An up to date place to find all of your relevent photos</p>
+        </div>
+    </section>
+
+    <!-- Gallery Content -->
+    <section class="gallery-page">
+        <div class="container">
+            <div class="gallery-filters">
+                <button class="filter-btn active" data-filter="all">All</button>
+            </div>
+
+            <!-- Uploaded Photos Section -->
+            <div class="gallery-section">
+                <h2 class="gallery-section-title">Recently Uploaded Photos</h2>
+                <div class="gallery-full-grid" id="uploadedPhotosGrid">
+                    <div class="loading">Loading uploaded photos...</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lightbox modal for image previews -->
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" id="lightboxClose">&times;</button>
+        <div class="lightbox-content">
+            <img src="" alt="Enlarged Image" class="lightbox-img" id="lightboxImg">
+            <div class="lightbox-caption" id="lightboxCaption"></div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Vision Valley</h3>
+                    <p>Residential Program<br>Pymble Ladies College</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="blog.html">Blog</a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Connect With Us</h3>
+                    <div class="social-icons">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 Vision Valley Residential Program, Pymble Ladies College. All rights reserved.</p>
+            </div>
+        </div>    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Filter functionality
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const galleryItems = document.querySelectorAll('.gallery-card');
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightboxImg');
+            const lightboxCaption = document.getElementById('lightboxCaption');
+            const lightboxClose = document.getElementById('lightboxClose');
+
+            // Filter buttons click event
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Set active button
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    // Filter items
+                    const filter = button.getAttribute('data-filter');
+                    
+                    galleryItems.forEach(item => {
+                        if (filter === 'all' || item.getAttribute('data-category') === filter) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+            // Lightbox functionality
+            galleryItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const imgSrc = item.querySelector('img').getAttribute('src');
+                    const title = item.querySelector('h3').textContent;
+                    const description = item.querySelector('p').textContent;
+                    
+                    lightboxImg.setAttribute('src', imgSrc);
+                    lightboxCaption.innerHTML = `<h3>${title}</h3><p>${description}</p>`;
+                    lightbox.classList.add('active');
+                    
+                    // Prevent body scrolling when lightbox is open
+                    document.body.style.overflow = 'hidden';
+                });
+            });
+
+            // Close lightbox
+            lightboxClose.addEventListener('click', () => {
+                lightbox.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            });
+
+            // Close lightbox when clicking outside the image
+            lightbox.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    lightbox.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                }
+            });
+
+            // Load uploaded photos from the API
+            function loadUploadedPhotos() {
+                const uploadedGrid = document.getElementById('uploadedPhotosGrid');
+                
+                if (!uploadedGrid) return;
+                
+                // Show loading indicator
+                uploadedGrid.innerHTML = '<div class="loading">Loading uploaded photos...</div>';
+                
+                // Fetch media from the API
+                api.media.getAll()
+                    .then(mediaItems => {
+                        console.log('Media items loaded:', mediaItems);
+                        
+                        if (!mediaItems || mediaItems.length === 0) {
+                            uploadedGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">No uploaded photos found.</p>';
+                            return;
+                        }
+                        
+                        // Filter only image types
+                        const imageItems = mediaItems.filter(item => 
+                            item.type === 'image' || 
+                            item.path.toLowerCase().endsWith('.jpg') || 
+                            item.path.toLowerCase().endsWith('.jpeg') || 
+                            item.path.toLowerCase().endsWith('.png') || 
+                            item.path.toLowerCase().endsWith('.gif')
+                        );
+                        
+                        if (imageItems.length === 0) {
+                            uploadedGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">No uploaded photos found.</p>';
+                            return;
+                        }
+                        
+                        // Clear the loading message
+                        uploadedGrid.innerHTML = '';
+                        
+                        // Add each photo to the grid
+                        imageItems.forEach(item => {                            // Format the image URL correctly: if it starts with /uploads, use the API server URL
+                            const imageUrl = item.path ? 
+                                (item.path.startsWith('/uploads') ? api.baseUrl + item.path : item.path) : '';
+                            const title = item.title || item.name || 'Uploaded Photo';
+                            const description = item.description || 'Vision Valley uploaded photo';
+                            const date = item.dateUploaded || '';
+                            
+                            console.log('Adding image with URL:', imageUrl);
+                            
+                            // Create gallery card element
+                            const card = document.createElement('div');
+                            card.className = 'gallery-card';
+                            card.setAttribute('data-category', 'uploaded');
+                            
+                            card.innerHTML = `
+                                <img src="${imageUrl}" alt="${title}" class="gallery-img" onerror="this.src='images/placeholder-image.jpg';">
+                                <div class="gallery-overlay">
+                                    <h3>${title}</h3>
+                                    <p>${description}</p>
+                                    ${date ? `<small>${date}</small>` : ''}
+                                </div>
+                            `;
+                              // Add click event for lightbox
+                            card.addEventListener('click', () => {
+                                const imgSrc = imageUrl;
+                                
+                                lightboxImg.setAttribute('src', imgSrc);
+                                lightboxCaption.innerHTML = `<h3>${title}</h3><p>${description}</p>`;
+                                if (date) {
+                                    lightboxCaption.innerHTML += `<p><small>Uploaded: ${date}</small></p>`;
+                                }
+                                lightbox.classList.add('active');
+                                
+                                // Prevent body scrolling when lightbox is open
+                                document.body.style.overflow = 'hidden';
+                            });
+                            
+                            // Append to the grid
+                            uploadedGrid.appendChild(card);
+                        });
+                        
+                        // Add the 'uploaded' category to filter buttons if it doesn't exist already
+                        const filterButtons = document.querySelector('.gallery-filters');
+                        if (filterButtons && !document.querySelector('button[data-filter="uploaded"]')) {
+                            const uploadedBtn = document.createElement('button');
+                            uploadedBtn.className = 'filter-btn';
+                            uploadedBtn.setAttribute('data-filter', 'uploaded');
+                            uploadedBtn.textContent = 'Uploaded';
+                            
+                            // Add click event to filter button
+                            uploadedBtn.addEventListener('click', () => {
+                                // Set active button
+                                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                                uploadedBtn.classList.add('active');
+                                
+                                // Filter items
+                                document.querySelectorAll('.gallery-card').forEach(item => {
+                                    if (item.getAttribute('data-category') === 'uploaded') {
+                                        item.style.display = 'block';
+                                    } else {
+                                        item.style.display = 'none';
+                                    }
+                                });
+                            });
+                            
+                            filterButtons.appendChild(uploadedBtn);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading uploaded photos:', error);
+                        uploadedGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">Failed to load uploaded photos. Please try again later.</p>';
+                    });
+            }
+            
+            // Update 'all' filter to include uploaded photos
+            document.querySelector('button[data-filter="all"]').addEventListener('click', () => {
+                document.querySelectorAll('.gallery-card').forEach(item => {
+                    item.style.display = 'block';
+                });
+            });
+            
+            // Load the uploaded photos
+            loadUploadedPhotos();
+        });
+    </script>
+</body>
+</html>

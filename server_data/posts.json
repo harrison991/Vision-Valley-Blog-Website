@@ -1,0 +1,13 @@
+[
+  {
+    "id": 1,
+    "title": "Test Post",
+    "content": "Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum",
+    "excerpt": "Lorem Ipsum",
+    "category": "student-life",
+    "status": "published",
+    "image": "",
+    "slug": "test-post",
+    "date": "June 16, 2025"
+  }
+]

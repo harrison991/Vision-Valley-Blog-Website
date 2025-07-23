@@ -1,0 +1,12 @@
+{
+  "siteName": "Vision Valley Residential Program",
+  "siteTagline": "Pymble Ladies College",
+  "siteDescription": "The Vision Valley Residential Program at Pymble Ladies College offers students a unique opportunity to learn, grow, and connect with nature while developing leadership skills and resilience.",
+  "adminUsername": "admin",
+  "adminEmail": "admin@visionvalley.com",
+  "adminPassword": "admin",
+  "postsPerPage": 6,
+  "showAuthor": true,
+  "showDate": true,
+  "allowComments": true
+}

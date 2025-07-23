@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login | Vision Valley Residential Program</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/blog.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <!-- Firebase Authentication -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <style>
+        .login-separator {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+        }
+        .login-separator::before, .login-separator::after {
+            content: "";
+            display: inline-block;
+            width: 40%;
+            height: 1px;
+            background-color: #ddd;
+            position: absolute;
+            top: 50%;
+        }
+        .login-separator::before {
+            left: 0;
+        }
+        .login-separator::after {
+            right: 0;
+        }
+        .login-separator span {
+            background: white;
+            padding: 0 10px;
+            position: relative;
+            color: #666;
+        }
+        .google-sign-in {
+            background-color: #fff;
+            color: #444;
+            border: 1px solid #ddd;
+            padding: 10px 15px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 15px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        .google-sign-in:hover {
+            background-color: #f5f5f5;
+        }        .google-sign-in .fa-google {
+            margin-right: 10px;
+            color: #4285F4;
+        }
+        
+        .auth-mode {
+            background-color: #f0f8ff;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            border-left: 4px solid #4285F4;
+            text-align: center;
+        }
+          .auth-mode p {
+            margin: 0;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .debug-info {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        
+        .debug-info h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        #authStatus {
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            background-color: #eee;
+            padding: 8px;
+            border-radius: 4px;
+            color: #333;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-page">
+        <div class="login-container">
+            <div class="login-logo">
+                <h1>Vision Valley</h1>
+                <p>Admin Dashboard</p>
+            </div>              <form id="loginForm" class="login-form">                <div class="auth-mode">
+                    <p>Sign in with Firebase Authentication</p>
+                    <small style="display: block; margin-top: 5px; font-style: italic;">You must have an account created in the Firebase Authentication console</small>
+                </div>
+                <div class="form-group">
+                    <label for="username">Email</label>
+                    <input type="email" id="username" required placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit">Login with Email</button>
+                <div class="admin-login-hint" style="margin-top: 10px; font-size: 12px; color: #666;">
+                    <p>For traditional admin login, use: <strong>admin@visionvalley.com</strong> / <strong>admin</strong></p>
+                </div>
+                
+                <div class="login-separator">
+                    <span>OR</span>
+                </div>
+                
+                <button type="button" id="googleSignInBtn" class="google-sign-in">
+                    <i class="fab fa-google"></i> Sign in with Google
+                </button>
+                  <div class="login-error" id="loginError" style="display: none;"></div>
+            </form>
+            
+            <div class="login-footer">
+                <p><a href="../index.html"><i class="fas fa-arrow-left"></i> Back to Website</a></p>
+            </div>
+        </div>
+    </div>      <script src="../js/db.js"></script>
+      <script src="../js/api.js"></script>
+      <script src="../js/firebase-config.js"></script>
+      <script src="../js/admin.js"></script>
+        <script>
+        // Debug authentication status
+        const authStatusElement = document.getElementById('authStatus');
+        
+        // Update authentication status display
+        function updateAuthStatus() {
+            if (typeof firebase !== 'undefined' && firebase.auth) {
+                const currentUser = firebase.auth().currentUser;
+                if (currentUser) {
+                    authStatusElement.innerHTML = `
+Firebase User: ${currentUser.displayName || currentUser.email || 'Unknown'}
+UID: ${currentUser.uid}
+Email: ${currentUser.email || 'Not available'}
+Email verified: ${currentUser.emailVerified}
+Provider: ${currentUser.providerData.map(p => p.providerId).join(', ')}`;
+                    authStatusElement.style.color = '#2e7d32';
+                } else {
+                    authStatusElement.textContent = 'No Firebase user is currently signed in';
+                    authStatusElement.style.color = '#666';
+                }
+            } else {
+                authStatusElement.textContent = 'Firebase is not initialized';
+                authStatusElement.style.color = '#d32f2f';
+            }
+            
+            // Also check traditional auth
+            const session = API.auth.getSession();
+            if (session) {
+                authStatusElement.innerHTML += `\n\nSession data: ${JSON.stringify(session, null, 2)}`;
+            }
+        }
+          // Update status initially
+        updateAuthStatus();
+        
+        // Test Firebase configuration
+        if (typeof firebase !== 'undefined') {
+            try {
+                // Display Firebase config status
+                const configStatus = document.createElement('div');
+                configStatus.style.marginTop = '10px';
+                configStatus.style.fontSize = '12px';
+                
+                if (firebase.app && firebase.app().options && firebase.app().options.apiKey) {
+                    const configInfo = {
+                        apiKey: firebase.app().options.apiKey ? "Set ✓" : "Missing ✗",
+                        authDomain: firebase.app().options.authDomain ? "Set ✓" : "Missing ✗",
+                        projectId: firebase.app().options.projectId ? "Set ✓" : "Missing ✗"
+                    };
+                    
+                    configStatus.innerHTML = `
+<strong>Firebase Config Check:</strong>
+<pre style="background:#f8f9fa;padding:5px;font-size:11px;margin:5px 0">
+API Key: ${configInfo.apiKey}
+Auth Domain: ${configInfo.authDomain}
+Project ID: ${configInfo.projectId}
+</pre>`;
+                    configStatus.style.color = 'green';
+                } else {
+                    configStatus.textContent = 'Firebase configuration appears to be missing or invalid';
+                    configStatus.style.color = 'red';
+                }
+                
+                document.querySelector('.debug-info').appendChild(configStatus);
+            } catch (e) {
+                console.error('Error checking Firebase config:', e);
+            }
+        }
+        
+        // Update status when auth state changes
+        if (typeof firebase !== 'undefined' && firebase.auth) {
+            firebase.auth().onAuthStateChanged(function(user) {
+                updateAuthStatus();
+            });
+        }
+        
+        // Setup Google auth provider
+        const googleProvider = new firebase.auth.GoogleAuthProvider();
+        
+        // Get the Google Sign In button
+        const googleSignInBtn = document.getElementById('googleSignInBtn');
+        
+        // Add click event for Google Sign In
+        if (googleSignInBtn) {
+            googleSignInBtn.addEventListener('click', function() {
+                // Show loading message
+                const loginError = document.getElementById('loginError');
+                loginError.textContent = 'Authenticating with Google...';
+                loginError.style.display = 'block';
+                loginError.style.color = '#666';
+                
+                // Sign in with Google popup
+                firebaseAuth.signInWithPopup(googleProvider)
+                    .then((result) => {
+                        // Google Sign In successful
+                        const user = result.user;
+                        
+                        // Save user data in session
+                        API.auth.saveFirebaseSession(user);
+                        
+                        // Redirect to admin dashboard
+                        window.location.href = 'index.html';
+                    })
+                    .catch((error) => {
+                        // Handle errors
+                        console.error('Google Sign In Error:', error);
+                        
+                        loginError.textContent = 'Google Sign In failed: ' + error.message;
+                        loginError.style.display = 'block';
+                        loginError.style.color = '#d32f2f';
+                    });
+            });
+        }
+      </script>
+</body>
+</html>

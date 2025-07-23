@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Vision Valley Residential Program</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/blog.css">
+    <link rel="stylesheet" href="../css/admin-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <!-- Firebase Authentication -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>    <style>
+        .user-profile {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+            padding: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 10px;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .user-avatar i {
+            font-size: 20px;
+            color: #666;
+        }
+        .user-info {
+            flex: 1;
+            overflow: hidden;
+        }
+        .user-info p {
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 14px;
+        }
+        .user-info .user-email {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        .auth-info {
+            font-size: 14px;
+            color: #4285F4;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+        }
+        .auth-info i {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-page">
+        <div class="admin-sidebar">
+            <div class="admin-sidebar-header">
+                <div class="admin-sidebar-logo">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <h2>Vision Valley</h2>
+                <p>Admin Dashboard</p>
+            </div>
+            <nav class="admin-nav">
+                <div class="nav-section">
+                    <p class="nav-section-title">Management</p>
+                    <ul>
+                        <li><a href="index.html" class="active" data-page="dashboard"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                        <li><a href="posts.html" data-page="posts"><i class="fas fa-file-alt"></i> <span>Blog Posts</span></a></li>
+                        <li><a href="pages.html" data-page="pages"><i class="fas fa-file"></i> <span>Pages</span></a></li>
+                        <li><a href="media.html" data-page="media"><i class="fas fa-images"></i> <span>Media</span></a></li>
+                    </ul>
+                </div>
+                <div class="nav-section">
+                    <p class="nav-section-title">Configuration</p>
+                    <ul>
+                        <li><a href="settings.html" data-page="settings"><i class="fas fa-cog"></i> <span>Settings</span></a></li>                        <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+                    </ul>
+                </div>
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <!-- Will be populated by JavaScript -->
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-info">
+                        <!-- Will be populated by JavaScript -->
+                        <p class="user-name">Admin</p>
+                        <p class="user-email"></p>
+                    </div>
+                </div>
+            </nav>
+        </div>
+          <div class="admin-main">            <div class="admin-header">
+                <div class="admin-header-info">
+                    <div>
+                        <h1>Dashboard</h1>
+                        <p class="admin-header-subtitle">Welcome back, Admin</p>
+                    </div>
+                </div>
+                <div class="admin-actions">
+                    <a href="new-post.html" class="admin-btn admin-btn-primary"><i class="fas fa-plus"></i> New Post</a>
+                    <a href="new-page.html" class="admin-btn admin-btn-secondary"><i class="fas fa-plus"></i> New Page</a>
+                    <button id="testApiBtn" class="admin-btn admin-btn-secondary"><i class="fas fa-wifi"></i> Test API Connection</button>
+                </div>
+            </div>
+            
+            <div class="admin-content">
+                <!-- Content will be loaded by JavaScript -->
+                <div class="loading">Loading dashboard data...</div>
+            </div>
+        </div>
+    </div>      <script src="../js/api.js"></script>
+      <script src="../js/firebase-config.js"></script>
+      <script src="../js/admin.js"></script>
+</body>
+</html>

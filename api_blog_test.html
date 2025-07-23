@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Content Test | Vision Valley</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: 100%;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .log {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+        .log .error { color: #d9534f; }
+        .log .success { color: #5cb85c; }
+        .log .warning { color: #f0ad4e; }
+        
+        .content-preview {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            background-color: #fff;
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .test-item {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            background-color: #f8f9fa;
+        }
+        
+        .status {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .status.success { color: #5cb85c; }
+        .status.error { color: #d9534f; }
+        
+        .home-link {
+            display: block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #0275d8;
+        }
+        .home-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Vision Valley Blog Content Test</h1>
+    
+    <div class="card">
+        <h2>Enter API Server URL</h2>
+        <input type="text" id="serverUrl" placeholder="e.g., http://192.168.0.50:5000" value="http://192.168.0.50:5000">
+        <button onclick="testConnection()">Test Connection</button>
+    </div>
+    
+    <div class="card">
+        <h2>Blog Content Tests</h2>
+        <p>This will test access to blog content via the server.</p>
+        <button onclick="runAllTests()">Run All Tests</button>
+        <div id="log" class="log">Waiting for tests to run...</div>
+        
+        <div class="test-grid" id="testGrid">
+            <!-- Test results will appear here -->
+        </div>
+    </div>
+    
+    <div class="card">
+        <h2>View Blog Content</h2>
+        <p>Enter a blog post slug to fetch its content directly from the server:</p>
+        <input type="text" id="blogSlug" placeholder="e.g., wilderness-journey">
+        <button onclick="fetchBlogContent()">Fetch Content</button>
+        <div id="blogContent" class="content-preview"></div>
+    </div>
+    
+    <a href="index.html" class="home-link">← Back to Homepage</a>
+
+    <script>
+        // Check if the API client is available and load it if not
+        if (typeof api === 'undefined') {
+            console.log('API client not loaded, loading it now...');
+            // Create script element to load api.js
+            const script = document.createElement('script');
+            script.src = 'js/api.js';
+            document.head.appendChild(script);
+            
+            script.onload = function() {
+                console.log('API client loaded successfully');
+                if (typeof api !== 'undefined') {
+                    console.log('API baseUrl:', api.baseUrl);
+                    document.getElementById('serverUrl').value = api.baseUrl;
+                }
+            };
+        }
+        
+        // Initialize when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // If API client is already available, use its baseUrl
+            if (typeof api !== 'undefined') {
+                document.getElementById('serverUrl').value = api.baseUrl;
+            }
+        });
+        
+        // Helper to log messages
+        function logMessage(message, type = 'info') {
+            const log = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const classType = type === 'error' ? 'error' : (type === 'success' ? 'success' : 
+                               type === 'warning' ? 'warning' : '');
+            
+            log.innerHTML += `<div class="${classType}">[${timestamp}] ${message}</div>`;
+            log.scrollTop = log.scrollHeight;
+        }
+        
+        // Test API connection
+        function testConnection() {
+            const serverUrl = document.getElementById('serverUrl').value.trim();
+            if (!serverUrl) {
+                logMessage('❌ Please enter a server URL', 'error');
+                return;
+            }
+            
+            logMessage('Testing connection to ' + serverUrl + '...');
+            
+            fetch(serverUrl + '/api/stats', { 
+                method: 'GET',
+                headers: { 'Accept': 'application/json' },
+                mode: 'cors',
+                signal: AbortSignal.timeout(5000)
+            })
+            .then(response => {
+                if (response.ok) {
+                    logMessage('✅ Connection successful! Server is responding.', 'success');
+                    
+                    // Update API baseUrl if API client is available
+                    if (typeof api !== 'undefined') {
+                        api.baseUrl = serverUrl;
+                        logMessage('✅ Updated API baseUrl to ' + serverUrl, 'success');
+                    }
+                    
+                    return response.json();
+                } else {
+                    logMessage(`❌ Server responded with error: ${response.status} ${response.statusText}`, 'error');
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+            })
+            .then(data => {
+                logMessage(`✅ Data received: ${JSON.stringify(data)}`, 'success');
+            })
+            .catch(error => {
+                if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                    logMessage('❌ Network error - server might be unreachable', 'error');
+                    logMessage('Check if:' +
+                        '\n1. The server is running' + 
+                        '\n2. The IP address is correct' + 
+                        '\n3. The port is correct and open' + 
+                        '\n4. No firewall is blocking the connection' + 
+                        '\n5. CORS is enabled on the server', 'warning');
+                } else if (error.name === 'AbortError') {
+                    logMessage('❌ Request timeout - server took too long to respond', 'error');
+                } else {
+                    logMessage(`❌ Error: ${error.message}`, 'error');
+                }
+            });
+        }
+        
+        // Run all tests
+        function runAllTests() {
+            const serverUrl = document.getElementById('serverUrl').value.trim();
+            if (!serverUrl) {
+                logMessage('❌ Please enter a server URL', 'error');
+                return;
+            }
+            
+            logMessage('Running all blog content tests...');
+            
+            // Clear test grid
+            const testGrid = document.getElementById('testGrid');
+            testGrid.innerHTML = '';
+            
+            // Test cases
+            const tests = [
+                { name: 'API Posts Endpoint', test: testPostsAPI },
+                { name: 'Blog HTML Content', test: testBlogHtml },
+                { name: 'Blog Slugs', test: testBlogSlugs },
+                { name: 'Image URLs', test: testImageUrls }
+            ];
+            
+            // Create test items
+            tests.forEach(test => {
+                const testItem = document.createElement('div');
+                testItem.className = 'test-item';
+                testItem.innerHTML = `
+                    <h3>${test.name}</h3>
+                    <p>Testing ${test.name.toLowerCase()}...</p>
+                    <div class="status" id="${test.name.replace(/\s+/g, '-').toLowerCase()}-status">Running...</div>
+                `;
+                testGrid.appendChild(testItem);
+                
+                // Run the test
+                test.test(serverUrl);
+            });
+        }
+        
+        // Test Posts API
+        function testPostsAPI(serverUrl) {
+            const statusEl = document.getElementById('api-posts-endpoint-status');
+            
+            fetch(serverUrl + '/api/posts?published=true', { 
+                method: 'GET',
+                headers: { 'Accept': 'application/json' },
+                signal: AbortSignal.timeout(5000)
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+            })
+            .then(data => {
+                if (Array.isArray(data) && data.length > 0) {
+                    logMessage(`✅ Posts API: Found ${data.length} published posts`, 'success');
+                    statusEl.innerHTML = `✅ Success: ${data.length} posts found`;
+                    statusEl.className = 'status success';
+                } else {
+                    logMessage('⚠️ Posts API: No posts found or invalid response format', 'warning');
+                    statusEl.innerHTML = '⚠️ Warning: No posts found';
+                    statusEl.className = 'status warning';
+                }
+            })
+            .catch(error => {
+                logMessage(`❌ Posts API Error: ${error.message}`, 'error');
+                statusEl.innerHTML = `❌ Failed: ${error.message}`;
+                statusEl.className = 'status error';
+            });
+        }
+        
+        // Test Blog HTML
+        function testBlogHtml(serverUrl) {
+            const statusEl = document.getElementById('blog-html-content-status');
+            
+            // First get a post slug from the API
+            fetch(serverUrl + '/api/posts?published=true', { 
+                method: 'GET',
+                headers: { 'Accept': 'application/json' },
+                signal: AbortSignal.timeout(5000)
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+            })
+            .then(posts => {
+                if (Array.isArray(posts) && posts.length > 0) {
+                    // Get the first post's slug
+                    const slug = posts[0].slug;
+                    logMessage(`✅ Found blog post with slug: ${slug}`, 'success');
+                    
+                    // Try to fetch the blog HTML
+                    return fetch(serverUrl + '/blog/' + slug + '.html');
+                } else {
+                    throw new Error('No posts found to test HTML content');
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    logMessage(`✅ Blog HTML: Successfully fetched blog HTML content`, 'success');
+                    statusEl.innerHTML = '✅ Success: HTML content accessible';
+                    statusEl.className = 'status success';
+                    return response.text();
+                } else {
+                    throw new Error(`Failed to fetch blog HTML: ${response.status}`);
+                }
+            })
+            .then(html => {
+                logMessage(`✅ Blog HTML: Content length: ${html.length} characters`, 'success');
+            })
+            .catch(error => {
+                logMessage(`❌ Blog HTML Error: ${error.message}`, 'error');
+                statusEl.innerHTML = `❌ Failed: ${error.message}`;
+                statusEl.className = 'status error';
+            });
+        }
+        
+        // Test Blog Slugs
+        function testBlogSlugs(serverUrl) {
+            const statusEl = document.getElementById('blog-slugs-status');
+            
+            fetch(serverUrl + '/api/posts?published=true', { 
+                method: 'GET',
+                headers: { 'Accept': 'application/json' },
+                signal: AbortSignal.timeout(5000)
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+            })
+            .then(posts => {
+                if (Array.isArray(posts) && posts.length > 0) {
+                    const validSlugs = posts.filter(post => post.slug && typeof post.slug === 'string');
+                    
+                    if (validSlugs.length === posts.length) {
+                        logMessage(`✅ Blog Slugs: All ${posts.length} posts have valid slugs`, 'success');
+                        statusEl.innerHTML = `✅ Success: ${posts.length} valid slugs found`;
+                        statusEl.className = 'status success';
+                    } else {
+                        logMessage(`⚠️ Blog Slugs: Only ${validSlugs.length} out of ${posts.length} posts have valid slugs`, 'warning');
+                        statusEl.innerHTML = `⚠️ Warning: Some posts missing slugs`;
+                        statusEl.className = 'status warning';
+                    }
+                } else {
+                    throw new Error('No posts found to test slugs');
+                }
+            })
+            .catch(error => {
+                logMessage(`❌ Blog Slugs Error: ${error.message}`, 'error');
+                statusEl.innerHTML = `❌ Failed: ${error.message}`;
+                statusEl.className = 'status error';
+            });
+        }
+        
+        // Test Image URLs
+        function testImageUrls(serverUrl) {
+            const statusEl = document.getElementById('image-urls-status');
+            
+            fetch(serverUrl + '/api/posts?published=true', { 
+                method: 'GET',
+                headers: { 'Accept': 'application/json' },
+                signal: AbortSignal.timeout(5000)
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+            })
+            .then(posts => {
+                if (Array.isArray(posts) && posts.length > 0) {
+                    // Check for posts with image URLs
+                    const postsWithImages = posts.filter(post => post.image);
+                    
+                    if (postsWithImages.length > 0) {
+                        logMessage(`✅ Image URLs: ${postsWithImages.length} out of ${posts.length} posts have images`, 'success');
+                        
+                        // Test the first image URL
+                        const imageUrl = postsWithImages[0].image;
+                        const fullImageUrl = imageUrl.startsWith('http') ? imageUrl : 
+                                           (imageUrl.startsWith('/') ? serverUrl + imageUrl : serverUrl + '/' + imageUrl);
+                        
+                        return fetch(fullImageUrl, { method: 'HEAD' });
+                    } else {
+                        throw new Error('No posts with images found');
+                    }
+                } else {
+                    throw new Error('No posts found to test images');
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    logMessage(`✅ Image URLs: Successfully fetched image`, 'success');
+                    statusEl.innerHTML = '✅ Success: Images accessible';
+                    statusEl.className = 'status success';
+                } else {
+                    throw new Error(`Failed to fetch image: ${response.status}`);
+                }
+            })
+            .catch(error => {
+                logMessage(`❌ Image URLs Error: ${error.message}`, 'error');
+                statusEl.innerHTML = `❌ Failed: ${error.message}`;
+                statusEl.className = 'status error';
+            });
+        }
+        
+        // Fetch blog content by slug
+        function fetchBlogContent() {
+            const serverUrl = document.getElementById('serverUrl').value.trim();
+            const blogSlug = document.getElementById('blogSlug').value.trim();
+            const contentEl = document.getElementById('blogContent');
+            
+            if (!serverUrl || !blogSlug) {
+                contentEl.innerHTML = '<p style="color: #d9534f;">Please enter both server URL and blog slug</p>';
+                return;
+            }
+            
+            contentEl.innerHTML = '<p>Loading blog content...</p>';
+            
+            fetch(serverUrl + '/blog/' + blogSlug + '.html')
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+            })
+            .then(html => {
+                contentEl.innerHTML = html;
+            })
+            .catch(error => {
+                contentEl.innerHTML = `<p style="color: #d9534f;">Error fetching blog content: ${error.message}</p>`;
+            });
+        }
+    </script>
+</body>
+</html>
