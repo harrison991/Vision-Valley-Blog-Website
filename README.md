@@ -52,4 +52,4 @@ For any questions or issues, please contact the website administrator.
 
 ---
 
-© 2025 Vision Valley Residential Program, Pymble Ladies College. All rights reserved.
+© 2025 Harrison Fluck and Associates. All rights reserved.
